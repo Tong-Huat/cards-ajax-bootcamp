@@ -1,4 +1,5 @@
 import jsSHA from 'jssha';
+import { getHash } from '../utility.mjs';
 
 export default function initUsersController(db) {
   const home = async (request, response) => {
@@ -6,18 +7,18 @@ export default function initUsersController(db) {
   };
 
   const login = async (request, response) => {
+    const loginData = request.body;
+    const hashedPassword = getHash(loginData.password);
     try {
       // locate user email within database
       const user = await db.User.findOne({
         where: {
-          email: request.body.email,
+          email: loginData.email,
         },
       });
       console.log('user==>', user);
       // convert keyed-in password to hashed so as to auth with the one in db
-      const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
-      shaObj.update(request.body.password);
-      const hashedPassword = shaObj.getHash('HEX');
+
       console.log('hashed password', hashedPassword);
       console.log('user.password :>> ', user.password);
       if (hashedPassword === user.password) {
@@ -33,7 +34,31 @@ export default function initUsersController(db) {
     }
   };
 
+  const register = async (request, response) => {
+    const user = request.body;
+    try {
+      const existingEmail = await db.User.findOne({
+        where: {
+          email: user.email,
+        },
+      });
+      if (!existingEmail) {
+        const hashedPassword = getHash(user.password);
+        await db.User.create({
+          email: user.email,
+          password: hashedPassword,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+        response.send('userCreated');
+      } else {
+        throw new Error('Failed Registration');
+      }
+    } catch (error) {
+      response.send({ error: error.message });
+    }
+  };
   return {
-    home, login,
+    home, login, register,
   };
 }

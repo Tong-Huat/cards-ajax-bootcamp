@@ -1,30 +1,81 @@
-// create login on landing page
+// create registrations on landing page
+const registrationContainer = document.createElement('div');
+registrationContainer.classList.add('container', 'form-signin', 'bg-light');
+
+// create registration elements: email and pw
+const registrationText = document.createElement('h2');
+registrationText.innerText = 'Registration Form';
+
+const regEmailDiv = document.createElement('div');
+regEmailDiv.classList.add('form-floating');
+const regEmail = document.createElement('input');
+regEmail.placeholder = 'Input Email';
+
+const regPasswordDiv = document.createElement('div');
+regPasswordDiv.classList.add('form-floating');
+const regPassword = document.createElement('input');
+regPassword.placeholder = 'Input Password';
+
+const registrationBtn = document.createElement('button');
+registrationBtn.innerText = 'Register';
+
+regEmailDiv.appendChild(regEmail);
+regPasswordDiv.appendChild(regPassword);
+registrationContainer.appendChild(registrationText);
+registrationContainer.appendChild(regEmailDiv);
+registrationContainer.appendChild(regPasswordDiv);
+registrationContainer.appendChild(registrationBtn);
+document.body.appendChild(registrationContainer);
+
+// ************** create login on landing page **************//
 const loginContainer = document.createElement('div');
-loginContainer.classList.add('container');
+loginContainer.classList.add('container', 'form-signin', 'bg-light');
 
 // create login elements: email and pw
-const loginText = document.createElement('p');
-loginText.innerText = 'Please login to continue';
+const loginText = document.createElement('h2');
+loginText.innerText = 'Login Form';
 
+const emailDiv = document.createElement('div');
+emailDiv.classList.add('form-floating');
 const email = document.createElement('input');
 email.placeholder = 'Input Email';
-email.setAttribute('required', 'required');
 
+const passwordDiv = document.createElement('div');
+passwordDiv.classList.add('form-floating');
 const password = document.createElement('input');
 password.placeholder = 'Input Password';
-password.setAttribute('required', 'required');
 
 const loginBtn = document.createElement('button');
 loginBtn.innerText = 'Login';
 
+emailDiv.appendChild(email);
+passwordDiv.appendChild(password);
 loginContainer.appendChild(loginText);
-loginContainer.appendChild(email);
-loginContainer.appendChild(password);
+loginContainer.appendChild(emailDiv);
+loginContainer.appendChild(passwordDiv);
 loginContainer.appendChild(loginBtn);
 document.body.appendChild(loginContainer);
 
 // create game btn
 const createGameBtn = document.createElement('button');
+
+registrationBtn.addEventListener('click', () => {
+  const registerData = {
+    email: regEmail.value,
+    password: regPassword.value,
+  };
+  console.log(registerData);
+  axios
+    .post('/register', registerData)
+    .then((response) => {
+      console.log('hellloow>>>>>>', response.data);
+      if (!response.data.error)
+      {
+        document.body.removeChild(registrationContainer);
+        registrationContainer.innerHTML = '';
+      }
+    });
+});
 
 loginBtn.addEventListener('click', () => {
   const loginData = {
@@ -41,6 +92,7 @@ loginBtn.addEventListener('click', () => {
         document.body.appendChild(createGameBtn);
         loginContainer.innerHTML = '';
         document.body.removeChild(loginContainer);
+        document.body.removeChild(registrationContainer);
       }
     });
 });
@@ -83,6 +135,7 @@ const dealCards = function () {
 };
 
 const createGame = function () {
+  document.body.removeChild(createGameBtn);
   // Make a request to create a new game
   axios.post('/games')
     .then((response) => {

@@ -1,9 +1,19 @@
 const jsSHA = require('jssha');
 
+const { SALT } = 'i love cocomelon';
+
+// eslint-disable-next-line import/prefer-default-export
+const getHash = (input) => {
+  // eslint-disable-next-line new-cap
+  const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+  // const unhasedString = `${input}`;
+  const unhasedString = `${input}-${SALT}`;
+  shaObj.update(unhasedString);
+
+  return shaObj.getHash('HEX');
+};
 const userPassword = '123456';
-const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
-shaObj.update(userPassword);
-const hashedPassword = shaObj.getHash('HEX');
+const hashedPassword = getHash(userPassword);
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {

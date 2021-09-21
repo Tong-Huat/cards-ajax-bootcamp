@@ -32,11 +32,11 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       email: {
-         allowNull: false,
+        allowNull: false,
         type: Sequelize.STRING,
       },
-       password: {
-          allowNull: false,
+      password: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       created_at: {
