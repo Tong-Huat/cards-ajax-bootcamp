@@ -1,8 +1,51 @@
-// global value that holds info about the current hand.
-let currentGame = null;
+// create login on landing page
+const loginContainer = document.createElement('div');
+loginContainer.classList.add('container');
+
+// create login elements: email and pw
+const loginText = document.createElement('p');
+loginText.innerText = 'Please login to continue';
+
+const email = document.createElement('input');
+email.placeholder = 'Input Email';
+email.setAttribute('required', 'required');
+
+const password = document.createElement('input');
+password.placeholder = 'Input Password';
+password.setAttribute('required', 'required');
+
+const loginBtn = document.createElement('button');
+loginBtn.innerText = 'Login';
+
+loginContainer.appendChild(loginText);
+loginContainer.appendChild(email);
+loginContainer.appendChild(password);
+loginContainer.appendChild(loginBtn);
+document.body.appendChild(loginContainer);
 
 // create game btn
 const createGameBtn = document.createElement('button');
+
+loginBtn.addEventListener('click', () => {
+  const loginData = {
+    email: email.value,
+    password: password.value,
+  };
+  console.log(loginData);
+  axios
+    .post('/login', loginData)
+    .then((response) => {
+      console.log('hellloow>>>>>>', response.data);
+      if (!response.data.error)
+      {
+        document.body.appendChild(createGameBtn);
+        loginContainer.innerHTML = '';
+        document.body.removeChild(loginContainer);
+      }
+    });
+});
+// global value that holds info about the current hand.
+let currentGame = null;
 
 // DOM manipulation function that displays the player's current hand.
 const runGame = function ({ playerHand }) {
@@ -70,4 +113,4 @@ const createGame = function () {
 // manipulate DOM, set up create game button
 createGameBtn.addEventListener('click', createGame);
 createGameBtn.innerText = 'Create Game';
-document.body.appendChild(createGameBtn);
+// document.body.appendChild(createGameBtn);

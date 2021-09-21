@@ -103,9 +103,9 @@ const makeDeck = function () {
 
 export default function initGamesController(db) {
   // render the main page
-  const index = (request, response) => {
-    response.render('games/index');
-  };
+  // const index = (request, response) => {
+  //   response.render('games/index');
+  // };
 
   // create a new game. Insert a new row in the DB.
   const create = async (request, response) => {
@@ -169,6 +169,6 @@ export default function initGamesController(db) {
   return {
     deal,
     create,
-    index,
+    // index,
   };
 }
