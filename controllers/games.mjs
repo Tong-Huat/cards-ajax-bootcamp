@@ -106,17 +106,43 @@ export default function initGamesController(db) {
   // const index = (request, response) => {
   //   response.render('games/index');
   // };
+  let player1Hand;
+  let player2Hand;
+  let result;
+  let player1Score = 0;
+  let player2Score = 0;
 
+  const determineWinner = () => {
+    if (player1Hand.rank === player2Hand.rank) {
+      result = 'Its a DRAW!';
+    } else if (player1Hand.rank > player2Hand.rank) {
+      result = 'Player 1 Won!';
+      player1Score += 1;
+    } else {
+      result = 'Player 2 Won!';
+      player2Score += 1;
+    }
+    return result;
+  };
   // create a new game. Insert a new row in the DB.
   const create = async (request, response) => {
     // deal out a new shuffled deck for this game.
     const cardDeck = shuffleCards(makeDeck());
-    const playerHand = [cardDeck.pop(), cardDeck.pop()];
-
+    player1Hand = cardDeck.pop();
+    player2Hand = cardDeck.pop();
+    console.log('player1Hand :>> ', player1Hand);
+    console.log('player1Hand.rank :>> ', player1Hand.rank);
+    console.log('player2Hand :>> ', player2Hand);
+    console.log('player2Hand.rank :>> ', player2Hand.rank);
+    determineWinner();
     const newGame = {
       gameState: {
         cardDeck,
-        playerHand,
+        player1Hand,
+        player2Hand,
+        player1Score,
+        player2Score,
+        result,
       },
     };
 
@@ -128,7 +154,11 @@ export default function initGamesController(db) {
       // dont include the deck so the user can't cheat
       response.send({
         id: game.id,
-        playerHand: game.gameState.playerHand,
+        player1Hand: game.gameState.player1Hand,
+        player2Hand: game.gameState.player2Hand,
+        player1Score: game.gameState.player1Score,
+        player2Score: game.gameState.player2Score,
+        result: game.gameState.result,
       });
     } catch (error) {
       response.status(500).send(error);
@@ -142,13 +172,19 @@ export default function initGamesController(db) {
       const game = await db.Game.findByPk(request.params.id);
 
       // make changes to the object
-      const playerHand = [game.gameState.cardDeck.pop(), game.gameState.cardDeck.pop()];
+      player1Hand = game.gameState.cardDeck.pop();
+      player2Hand = game.gameState.cardDeck.pop();
+      determineWinner();
 
       // update the game with the new info
       await game.update({
         gameState: {
           cardDeck: game.gameState.cardDeck,
-          playerHand,
+          player1Hand,
+          player2Hand,
+          player1Score,
+          player2Score,
+          result,
         },
 
       });
@@ -157,7 +193,11 @@ export default function initGamesController(db) {
       // dont include the deck so the user can't cheat
       response.send({
         id: game.id,
-        playerHand: game.gameState.playerHand,
+        player1Hand: game.gameState.player1Hand,
+        player2Hand: game.gameState.player2Hand,
+        player1Score: game.gameState.player1Score,
+        player2Score: game.gameState.player2Score,
+        result: game.gameState.result,
       });
     } catch (error) {
       response.status(500).send(error);

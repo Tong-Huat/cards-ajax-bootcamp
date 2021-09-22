@@ -96,25 +96,73 @@ loginBtn.addEventListener('click', () => {
       }
     });
 });
+// ************** card container **************//
+const cardContainer = document.createElement('div');
+cardContainer.classList.add('container', 'form-signin', 'bg-light');
+
+// ************** create player 1 elements **************//
+const p1Hand = document.createElement('h5');
+p1Hand.innerText = 'Player 1 Card';
+
+const p1Card = document.createElement('h6');
+p1Card.classList.add('form-floating');
+
+// ************** create player 2 elements **************
+const p2Hand = document.createElement('h5');
+p2Hand.innerText = 'Player 2 Card';
+
+const p2Card = document.createElement('h6');
+p2Card.classList.add('form-floating');
+
+const result = document.createElement('h5');
+result.innerText = 'Result';
+
+const winner = document.createElement('h6');
+winner.classList.add('form-floating');
+
+cardContainer.appendChild(p1Hand);
+cardContainer.appendChild(p1Card);
+cardContainer.appendChild(p2Hand);
+cardContainer.appendChild(p2Card);
+cardContainer.appendChild(result);
+cardContainer.appendChild(winner);
+
 // global value that holds info about the current hand.
 let currentGame = null;
 
 // DOM manipulation function that displays the player's current hand.
-const runGame = function ({ playerHand }) {
+const runGame = function ({
+  player1Hand, player2Hand, result, player1Score, player2Score,
+}) {
   // manipulate DOM
   const gameContainer = document.querySelector('#game-container');
 
-  gameContainer.innerText = `
-    Your Hand:
+  p1Card.innerHTML = `
+    Player1 Hand:
     ====
-    ${playerHand[0].name}
+    ${player1Hand.name}
     of
-    ${playerHand[0].suit}
+    ${player1Hand.suit}
     ====
-    ${playerHand[1].name}
-    of
-    ${playerHand[1].suit}
   `;
+  p2Card.innerHTML = `
+      Player2 Hand:
+    ====
+    ${player2Hand.name}
+    of
+    ${player2Hand.suit}
+    ====
+  `;
+  winner.innerHTML = `
+    ${result}
+    <br>
+    Player1 Score: ${player1Score}
+     <br>
+    Player2 Score: ${player2Score}
+  `;
+  gameContainer.appendChild(cardContainer);
+  console.log('player1Hand :>> ', player1Hand);
+  console.log('player2Hand :>> ', player2Hand);
 };
 
 // make a request to the server
