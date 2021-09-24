@@ -182,6 +182,42 @@ const dealCards = function () {
     });
 };
 
+const refresh = function () {
+  const gameId = {
+    id: currentGame.id,
+  };
+  axios
+    .post('/refresh', gameId)
+    .then((response) => {
+      p1Card.innerHTML = '';
+      p2Card.innerHTML = '';
+      winner.innerHTML = '';
+      console.log(response.data);
+      p1Card.innerHTML = `
+        Player1 Hand:
+        ====
+        ${response.data.player1Hand.name}
+        of
+        ${response.data.player1Hand.suit}
+        ====
+      `;
+      p2Card.innerHTML = `
+          Player2 Hand:
+        ====
+        ${response.data.player2Hand.name}
+        of
+        ${response.data.player2Hand.suit}
+        ====
+      `;
+      winner.innerHTML = `
+        ${response.data.result}
+        <br>
+        Player1 Score: ${response.data.player1Score}
+         <br>
+        Player2 Score: ${response.data.player2Score}
+      `;
+    });
+};
 const createGame = function () {
   document.body.removeChild(createGameBtn);
   // Make a request to create a new game
@@ -200,10 +236,13 @@ const createGame = function () {
       // Create a button for it.
       const dealBtn = document.createElement('button');
       dealBtn.addEventListener('click', dealCards);
-
+      const refreshBtn = document.createElement('button');
+      refreshBtn.addEventListener('click', refresh);
       // display the button
       dealBtn.innerText = 'Deal';
       document.body.appendChild(dealBtn);
+      refreshBtn.innerText = 'Refresh';
+      document.body.appendChild(refreshBtn);
     })
     .catch((error) => {
       // handle error

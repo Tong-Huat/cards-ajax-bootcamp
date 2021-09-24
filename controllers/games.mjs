@@ -148,17 +148,24 @@ export default function initGamesController(db) {
 
     try {
       // run the DB INSERT query
-      const game = await db.Game.create(newGame);
+      const createNewGame = await db.Game.create(newGame);
 
+      // console.log('userCount :>> ', userCount);
+      const player1 = await db.User.findOne({
+        where: {
+          id: request.cookies.userId,
+        },
+      });
+      console.log('player1 id :>> ', player1);
       // send the new game back to the user.
       // dont include the deck so the user can't cheat
       response.send({
-        id: game.id,
-        player1Hand: game.gameState.player1Hand,
-        player2Hand: game.gameState.player2Hand,
-        player1Score: game.gameState.player1Score,
-        player2Score: game.gameState.player2Score,
-        result: game.gameState.result,
+        id: createNewGame.id,
+        player1Hand: createNewGame.gameState.player1Hand,
+        player2Hand: createNewGame.gameState.player2Hand,
+        player1Score: createNewGame.gameState.player1Score,
+        player2Score: createNewGame.gameState.player2Score,
+        result: createNewGame.gameState.result,
       });
     } catch (error) {
       response.status(500).send(error);
@@ -204,11 +211,31 @@ export default function initGamesController(db) {
     }
   };
 
+  const refresh = async (request, response) => {
+    try {
+      const updatedGame = await db.Game.findOne({
+        where: {
+          id: request.body.id,
+        },
+      });
+      response.send({
+        id: updatedGame.id,
+        player1Hand: updatedGame.gameState.player1Hand,
+        player2Hand: updatedGame.gameState.player2Hand,
+        player1Score: updatedGame.gameState.player1Score,
+        player2Score: updatedGame.gameState.player2Score,
+        result: updatedGame.gameState.result,
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
+  };
   // return all functions we define in an object
   // refer to the routes file above to see this used
   return {
     deal,
     create,
-    // index,
+    refresh,
   };
 }
